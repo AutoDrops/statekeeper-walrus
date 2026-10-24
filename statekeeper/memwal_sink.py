@@ -10,7 +10,6 @@ STATEKEEPER_MEMWAL=off|mock|staging|live   (default off)
   mock    - the SDK's own offline MemWalMock (no network)
   staging - Walrus Memory testnet relayer; needs MEMWAL_KEY + MEMWAL_ACCOUNT_ID
             (from staging.memory.walrus.xyz), read from the environment only.
-Mainnet is deliberately not wired in this branch.
 """
 from __future__ import annotations
 

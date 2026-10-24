@@ -2,7 +2,6 @@
 and wallet balances. Key from env TATUM_API_KEY; without it, a mock is used.
 
 TATUM_SUI_NETWORK=testnet (default) -> https://sui-testnet.gateway.tatum.io/graphql
-Mainnet is intentionally not the default in this branch.
 """
 from __future__ import annotations
 

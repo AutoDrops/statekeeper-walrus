@@ -67,15 +67,17 @@ rebuilds it on another machine. Override endpoints with `WALRUS_PUBLISHER` / `WA
 
 Live check: `WALRUS_LIVE=1 pytest -s tests/test_walrus.py -k live`.
 
-Not done yet: Walrus Memory (MemWal) SDK integration and mainnet writes, Tatum Sui RPC.
-These need a Sui wallet, a MemWal account and a Tatum API key.
+Done: MemWal mirroring (mainnet via the free Foundation-hosted relayer; the relayer pays storage,
+no WAL/SUI spent; demo uses 10 synthetic memories in namespace `statekeeper-demo`) and Tatum Sui
+GraphQL lookups (testnet). Results are in `test-results-*.txt`.
 
 ### Walrus Memory (MemWal) and Tatum
 - `STATEKEEPER_MEMWAL=off|mock|staging`: mirrors each memory event into Walrus Memory
-  (`mock` = SDK's offline MemWalMock; `staging` = testnet relayer, needs `MEMWAL_KEY`,
+  (`mock` = SDK's offline MemWalMock; `live` = hosted relayer, default mainnet (free, sponsored); `staging` = testnet relayer, needs `MEMWAL_KEY`,
   `MEMWAL_ACCOUNT_ID` from staging.memory.walrus.xyz). Can run together with `STATEKEEPER_WALRUS`.
 - `TATUM_API_KEY` or `TATUM_KEY_FILE` (free tier, key kept outside the repo), `TATUM_SUI_NETWORK=testnet`: Sui GraphQL via the Tatum gateway (testnet gateway is GraphQL-only);
   live test: `TATUM_LIVE=1 pytest -s tests/test_tatum_memwal.py -k live`;
   `GET /api/onchain/<object_id>` shows whether a Walrus Blob object exists onchain.
   Without a key, a mock is used.
-- This branch is testnet-only; mainnet is not wired.
+- Limitations: mainnet is used only for MemWal through the free sponsored relayer with synthetic data;
+  the Walrus event-log blobs and Tatum lookups run on testnet; no own mainnet publisher or paid storage.
