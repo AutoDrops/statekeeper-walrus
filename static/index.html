@@ -1,0 +1,21 @@
+<!doctype html><html><head><meta charset="utf-8"><title>StateKeeper</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{font-family:system-ui,sans-serif;margin:0;display:flex;height:100vh}
+#chat,#mem{padding:16px;overflow:auto}#chat{flex:3;border-right:1px solid #ddd}#mem{flex:2;background:#fafafa}
+.u{color:#035}.a{color:#333;margin-bottom:12px}.sup{color:#999;text-decoration:line-through}
+form{display:flex;gap:8px}input{flex:1;padding:8px}small{color:#777}</style></head><body>
+<div id="chat"><h2>StateKeeper <small id="model"></small></h2><div id="log"></div>
+<form id="f"><input id="m" placeholder="Tell me something or ask..." autocomplete="off"><button>Send</button></form></div>
+<div id="mem"><h3>Memory (transparent view)</h3><div id="facts"></div></div>
+<script>
+const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+async function load(){const r=await (await fetch('/api/memory')).json();model.textContent='model: '+r.model;
+facts.innerHTML=r.facts.map(f=>`<div class="${f.status=='active'?'':'sup'}"><b>${esc(f.key)}</b>: ${esc(f.value)}
+<small>#${f.id} turn ${f.turn} ${f.status}${f.replaced_by?' → #'+f.replaced_by:''}</small>
+${f.status=='active'?`<button onclick="del(${f.id})">forget</button>`:''}</div>`).join('')||'<i>empty</i>'}
+async function del(id){await fetch('/api/memory/'+id,{method:'DELETE'});load()}
+f.onsubmit=async e=>{e.preventDefault();const t=m.value;if(!t)return;m.value='';
+log.innerHTML+=`<div class="u">You: ${esc(t)}</div>`;
+const r=await (await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:t})})).json();
+log.innerHTML+=`<div class="a">StateKeeper: ${esc(r.reply)}<br><small>used ${r.used.length} facts, wrote ${r.written.length}</small></div>`;load()};
+load();</script></body></html>
